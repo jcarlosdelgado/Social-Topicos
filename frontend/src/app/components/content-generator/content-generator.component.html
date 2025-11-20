@@ -1,0 +1,174 @@
+<div class="app-layout">
+  <!-- Overlay -->
+  <div class="sidebar-overlay" [class.show]="sidebarOpen" (click)="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" [class.open]="sidebarOpen">
+    <div class="sidebar-header">
+      <button class="btn-new-chat" (click)="newChat()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nuevo Chat
+      </button>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <h3>Historial</h3>
+        <p class="empty-state" *ngIf="chatHistory.length === 0">No hay conversaciones</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <div class="chat-header">
+      <button class="btn-sidebar-toggle" (click)="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <h1>UAGRM NOTICIAS IA</h1>
+      <div style="width: 40px;"></div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-messages">
+      <!-- Welcome Message -->
+      <div class="message ai-message" *ngIf="chatHistory.length === 0 && !isLoading">
+        <div class="message-content-wrapper">
+          <div class="avatar">AI</div>
+          <div class="message-content">
+            <p><strong>¡Hola!</strong> Soy tu asistente de contenido para redes sociales universitarias.</p>
+            <p>Puedo ayudarte a crear publicaciones para <strong>Facebook, Instagram, WhatsApp, LinkedIn y
+                TikTok</strong>.</p>
+            <p>Escribe el título y detalles de tu noticia académica para comenzar.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Messages -->
+      <div *ngFor="let msg of chatHistory; let i = index"
+        [ngClass]="{'message': true, 'user-message': msg.type === 'user', 'ai-message': msg.type === 'ai'}">
+        <div class="message-content-wrapper">
+          <div class="avatar">{{ msg.type === 'user' ? 'Tú' : 'AI' }}</div>
+
+          <div class="message-content">
+            <!-- User Message -->
+            <div *ngIf="msg.type === 'user'" class="user-text">
+              <strong>{{ msg.title }}</strong>
+              <p>{{ msg.body }}</p>
+            </div>
+
+            <!-- AI Response -->
+            <div *ngIf="msg.type === 'ai'">
+              <div class="results-grid">
+                <div *ngFor="let platform of getObjectKeys(msg.content)" class="result-card">
+                  <div class="card-header">{{ platform }}</div>
+
+                  <div class="card-body" *ngIf="!msg.content[platform].error; else errorTpl">
+                    <!-- Image -->
+                    <div class="media-preview"
+                      *ngIf="getMediaUrl(msg.content[platform]) && !getVideoUrl(msg.content[platform])">
+                      <img [src]="getMediaUrl(msg.content[platform])" alt="Generated Image"
+                        (error)="handleImageError($event, platform)">
+                    </div>
+                    <!-- Video -->
+                    <div class="media-preview" *ngIf="getVideoUrl(msg.content[platform])">
+                      <video controls [src]="getVideoUrl(msg.content[platform])"></video>
+                    </div>
+
+                    <!-- Text Content -->
+                    <div class="content-text">
+                      <p>{{ getTextContent(msg.content[platform]) }}</p>
+                      <div class="hashtags" *ngIf="msg.content[platform].hashtags">
+                        <span *ngFor="let tag of msg.content[platform].hashtags">{{ tag }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Publish Button with States -->
+                    <button class="btn-publish" (click)="publish(platform, msg.content[platform], i)"
+                      [disabled]="isPublishDisabled(i, platform)"
+                      [class.publishing]="getPublishButtonState(i, platform) === 'publishing'"
+                      [class.published]="getPublishButtonState(i, platform) === 'published'">
+                      <span *ngIf="getPublishButtonState(i, platform) === 'publishing'" class="btn-content">
+                        <svg class="spinner" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        Publicando...
+                      </span>
+                      <span *ngIf="getPublishButtonState(i, platform) === 'published'" class="btn-content">
+                        ✓ Publicado
+                      </span>
+                      <span *ngIf="!getPublishButtonState(i, platform) && platform === 'tiktok'" class="btn-content">
+                        Próximamente
+                      </span>
+                      <span *ngIf="!getPublishButtonState(i, platform) && platform !== 'tiktok'" class="btn-content">
+                        Publicar
+                      </span>
+                    </button>
+                  </div>
+
+                  <ng-template #errorTpl>
+                    <div class="card-body error">
+                      <p>{{ msg.content[platform].message }}</p>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="message ai-message" *ngIf="isLoading">
+        <div class="message-content-wrapper">
+          <div class="avatar">AI</div>
+          <div class="message-content">
+            <div class="typing-indicator">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="message error-message" *ngIf="error">
+        <div class="message-content-wrapper">
+          <div class="message-content">
+            <p>⚠️ {{ error }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="input-container">
+        <div class="platform-toggles">
+          <label *ngFor="let p of platforms" [class.active]="selectedPlatforms[p]"
+            (click)="selectedPlatforms[p] = !selectedPlatforms[p]">
+            {{ p }}
+          </label>
+        </div>
+
+        <div class="text-inputs">
+          <input type="text" [(ngModel)]="title" placeholder="Título del tema (ej: Inscripciones 2025)"
+            [disabled]="isLoading">
+          <textarea [(ngModel)]="body" rows="1" placeholder="Detalles de la noticia..." [disabled]="isLoading"
+            (keydown.control.enter)="generate()"></textarea>
+          <button class="btn-send" (click)="generate()" [disabled]="isLoading || !title || !body"
+            title="Enviar (Ctrl+Enter)">
+            ➤
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

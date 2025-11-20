@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Social AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-gradient"></div>
+    
+    <div class="container">
+        <header>
+            <h1>University Social AI</h1>
+            <p>Generador de contenido inteligente para redes académicas</p>
+        </header>
+
+        <main>
+            <section class="input-section glass-card">
+                <form id="generateForm">
+                    <div class="form-group">
+                        <label for="title">Título del Evento / Noticia</label>
+                        <input type="text" id="title" placeholder="Ej: 150 Aniversario de la Universidad" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="body">Detalles y Contexto</label>
+                        <textarea id="body" rows="5" placeholder="Describe los detalles del evento, fecha, lugar y mensaje clave..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Plataformas Destino</label>
+                        <div class="platforms-grid">
+                            <label class="checkbox-btn">
+                                <input type="checkbox" name="platform" value="facebook" checked>
+                                <span>Facebook</span>
+                            </label>
+                            <label class="checkbox-btn">
+                                <input type="checkbox" name="platform" value="instagram" checked>
+                                <span>Instagram</span>
+                            </label>
+                            <label class="checkbox-btn">
+                                <input type="checkbox" name="platform" value="linkedin" checked>
+                                <span>LinkedIn</span>
+                            </label>
+                            <label class="checkbox-btn">
+                                <input type="checkbox" name="platform" value="tiktok" checked>
+                                <span>TikTok</span>
+                            </label>
+                            <label class="checkbox-btn">
+                                <input type="checkbox" name="platform" value="whatsapp" checked>
+                                <span>WhatsApp</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="generateBtn" class="primary-btn">
+                        <span class="btn-text">Generar Contenido</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                </form>
+            </section>
+
+            <section id="resultsSection" class="results-grid hidden">
+                <!-- Results will be injected here -->
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Ignore local sqlite dev DB and logs
+dev.db
+backend/logs/
+uvicorn.log
+celery.log
+__pycache__/
+.venv/
+.env
+.env.local
