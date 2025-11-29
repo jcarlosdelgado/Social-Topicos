@@ -21,7 +21,7 @@ class ContentGenerator:
             "docente", "profesor", "estudiante", "académ", "investigación",
             "seminario", "congreso", "publicación", "artículo", "facultad",
             "departamento", "aniversario", "celebración", "retiro", "admisión",
-            "inscripción", "matrícula", "convocatoria", "examen", "grado"
+            "inscripción", "matrícula", "convocatoria", "examen", "grado","ficct"
         ]
         for k in academic_keywords:
             if k in txt:
@@ -49,7 +49,8 @@ class ContentGenerator:
             "Debes rechazar generar contenido para temas claramente fuera del ámbito académico o universitario. "
             "Devuelve un objeto JSON donde las claves son los nombres de las plataformas (en minúsculas) y los valores son objetos que contienen: "
             "- 'text': El texto/leyenda de la publicación (en español). "
-            "- 'image_prompt': Un prompt detallado para generar una imagen para esta publicación (DALL-E). "
+            "- 'image_prompt': Un prompt "
+            "detallado para generar una imagen para esta publicación (DALL-E). "
             "- 'hashtags': Una lista de hashtags relevantes (para Instagram/TikTok/LinkedIn). "
             "- 'script': (Solo para TikTok) Un guion corto para un video de 15-30s (en español). "
             "- 'tone': El tono utilizado (ej: Profesional, Casual, Emocionante). "

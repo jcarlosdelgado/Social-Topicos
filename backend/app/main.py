@@ -6,7 +6,12 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import router as api_router
+from app.api.api import api_router
+from app.db.base import Base
+from app.db.session import engine
+
+# Create Tables
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="University Social Media Generator")
 
@@ -31,3 +36,9 @@ app.include_router(api_router, prefix="/api")
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the University Social Media Generator API"}
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint for Docker and load balancers"""
+    return {"status": "healthy", "service": "backend"}
+

@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { ContentGeneratorComponent } from './components/content-generator/content-generator.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [ContentGeneratorComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

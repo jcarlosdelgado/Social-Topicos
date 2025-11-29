@@ -1,14 +1,15 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-content-generator',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: './content-generator.component.html',
     styleUrls: ['./content-generator.component.css']
 })
@@ -31,22 +32,81 @@ export class ContentGeneratorComponent {
 
     constructor(
         private apiService: ApiService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private router: Router // Inject Router
     ) { }
 
     // Chat history structure
     chatHistory: any[] = [];
+    chats: any[] = []; // List of past chats
+
+    ngOnInit() {
+        if (this.apiService.isLoggedIn()) {
+            this.loadChats();
+        }
+    }
+
+    isLoggedIn(): boolean {
+        return this.apiService.isLoggedIn();
+    }
+
+    logout() {
+        this.apiService.logout();
+        this.router.navigate(['/login']);
+    }
+
+    loadChats() {
+        this.apiService.getChats().subscribe({
+            next: (res) => {
+                this.chats = res;
+            },
+            error: (err) => console.error(err)
+        });
+    }
+
+    loadChat(chatId: number) {
+        this.isLoading = true;
+        this.apiService.getMessages(chatId).subscribe({
+            next: (msgs) => {
+                this.chatHistory = msgs.map((m: any) => {
+                    let content;
+                    try {
+                        content = JSON.parse(m.content);
+                    } catch (e) {
+                        content = m.content;
+                    }
+
+                    if (m.role === 'user') {
+                        return {
+                            type: 'user',
+                            title: content.title || 'User Message',
+                            body: content.body || content
+                        };
+                    } else {
+                        return {
+                            type: 'ai',
+                            content: content
+                        };
+                    }
+                });
+                this.isLoading = false;
+                this.cdr.detectChanges();
+            },
+            error: (err) => {
+                console.error(err);
+                this.isLoading = false;
+            }
+        });
+    }
 
     // Track publishing states: { messageIndex: { platform: 'publishing' | 'published' } }
     publishingStates: { [key: string]: { [platform: string]: string } } = {};
 
     newChat() {
-        if (this.chatHistory.length > 0 && confirm('¿Iniciar una nueva conversación? Se perderá el historial actual.')) {
-            this.chatHistory = [];
-            this.title = '';
-            this.body = '';
-            this.error = '';
-        }
+        this.chatHistory = [];
+        this.title = '';
+        this.body = '';
+        this.error = '';
     }
 
     toggleSidebar() {
@@ -134,14 +194,21 @@ export class ContentGeneratorComponent {
 
         const text = content.text || content.caption || content.message || content.script || '';
         const mediaUrl = content.media_url;
+        const videoPath = content.video_path; // For TikTok local file path
         const videoUrl = content.video_url || content.display_video_url;
 
-        const payload = {
+        const payload: any = {
             platform: platform,
-            text: text,
-            media_url: mediaUrl,
-            video_url: videoUrl
+            text: text
         };
+
+        // For TikTok, send video_path as a separate field
+        if (platform === 'tiktok') {
+            payload.video_path = videoPath; // Send video_path for TikTok
+            payload.media_url = videoUrl || mediaUrl; // Keep media_url for display purposes
+        } else {
+            payload.media_url = mediaUrl;
+        }
 
         this.apiService.publishContent(payload).subscribe({
             next: (res: any) => {
@@ -171,7 +238,6 @@ export class ContentGeneratorComponent {
     }
 
     isPublishDisabled(messageIndex: number, platform: string): boolean {
-        if (platform === 'tiktok') return true;
         const state = this.getPublishButtonState(messageIndex, platform);
         return state === 'publishing' || state === 'published';
     }

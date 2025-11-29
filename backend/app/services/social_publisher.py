@@ -21,5 +21,5 @@ class SocialPublisher:
     def publish_linkedin(self, text: str, image_url: Optional[str] = None) -> Dict[str, Any]:
         return self.linkedin.publish(text, image_url)
 
-    def publish_tiktok(self, text: str, video_url: Optional[str] = None) -> Dict[str, Any]:
-        return self.tiktok.publish(text, video_url)
+    def publish_tiktok(self, text: str, video_path: Optional[str] = None) -> Dict[str, Any]:
+        return self.tiktok.publish(text, video_path)

@@ -33,7 +33,10 @@
         </svg>
       </button>
       <h1>UAGRM NOTICIAS IA</h1>
-      <div style="width: 40px;"></div>
+      <div class="header-actions">
+  <button *ngIf="isLoggedIn()" (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+  <a *ngIf="!isLoggedIn()" routerLink="/login" class="btn-login">Login</a>
+</div>
     </div>
 
     <!-- Chat Messages -->

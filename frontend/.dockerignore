@@ -1,0 +1,16 @@
+node_modules
+dist
+.angular
+.vscode
+.idea
+npm-debug.log
+yarn-error.log
+.git
+.gitignore
+*.log
+Dockerfile
+.dockerignore
+README.md
+e2e
+.editorconfig
+karma.conf.js
