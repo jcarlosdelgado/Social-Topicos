@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Social Topicos - Generador de Contenido para Redes Sociales
 
 Sistema automatizado de generación y publicación de contenido para redes sociales, diseñado específicamente para universidades y instituciones educativas. Utiliza inteligencia artificial (OpenAI GPT y DALL-E) para crear contenido personalizado y publicarlo directamente en múltiples plataformas sociales.
@@ -15,14 +14,6 @@ Social Topicos es una herramienta integral que automatiza el proceso completo de
 
 ## 🚀 Quick Start
 
-=======
-# Social Topicos - AI-Powered Social Media Content Generator
-
-Generador de contenido para redes sociales impulsado por IA, diseñado específicamente para universidades y instituciones educativas.
-
-## 🚀 Quick Start
-
->>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 ### Opción 1: Docker (Recomendado)
 
 ```bash
@@ -79,7 +70,6 @@ Accede a: **http://localhost:4200**
 
 ---
 
-<<<<<<< HEAD
 ## 📦 Stack Tecnológico
 
 ### Backend
@@ -110,237 +100,6 @@ Accede a: **http://localhost:4200**
 ---
 
 ## 🏗️ Arquitectura del Sistema
-=======
-## 📦 Tecnologías
-
-### Backend
-- **FastAPI** - Framework web moderno y rápido
-- **PostgreSQL** - Base de datos relacional
-- **Redis** - Cache y gestión de cola
-- **OpenAI GPT** - Generación de contenido con IA
-- **SQLAlchemy** - ORM para Python
-
-### Frontend
-- **Angular 18** - Framework frontend
-- **TypeScript** - Lenguaje tipado
-- **RxJS** - Programación reactiva
-
-### Integraciones
-- **Facebook Graph API** - Publicación en Facebook
-- **Instagram Graph API** - Publicación en Instagram
-- **Whapi.cloud** - Publicación en WhatsApp Stories
-
----
-
-## 🏗️ Arquitectura
-
-```
-┌─────────────┐      ┌─────────────┐      ┌─────────────┐
-│   Angular   │─────▶│   Nginx     │─────▶│   FastAPI   │
-│  Frontend   │      │   Reverse   │      │   Backend   │
-│             │      │   Proxy     │      │             │
-└─────────────┘      └─────────────┘      └──────┬──────┘
-                                                  │
-                                    ┌─────────────┼─────────────┐
-                                    │             │             │
-                              ┌─────▼─────┐ ┌────▼────┐ ┌─────▼─────┐
-                              │ PostgreSQL│ │  Redis  │ │  OpenAI   │
-                              │  Database │ │  Cache  │ │    API    │
-                              └───────────┘ └─────────┘ └───────────┘
-```
-
----
-
-## 🎯 Características
-
-### ✨ Generación de Contenido con IA
-- Genera posts personalizados usando GPT-4
-- Crea imágenes con DALL-E 3
-- Adapta el contenido a cada plataforma social
-- Contexto universitario integrado
-
-### 📱 Publicación Multi-Plataforma
-- **Facebook**: Posts con imagen y texto
-- **Instagram**: Posts con imagen y caption
-- **WhatsApp**: Stories con imagen y caption
-
-### 🔄 Sistema de Cola Inteligente
-- Cola de publicaciones con procesamiento automático
-- Dashboard de administración en tiempo real
-- Control ON/OFF de la cola
-- Monitoreo de estado de publicaciones
-
-### 👥 Gestión de Usuarios
-- Sistema de autenticación JWT
-- Roles de usuario (admin/user)
-- Historial de publicaciones por usuario
-
-### 💬 Chat Interactivo
-- Interfaz tipo ChatGPT
-- Historial de conversaciones
-- Generación iterativa de contenido
-
----
-
-## 🐳 Despliegue en Producción
-
-### AWS EC2
-
-Consulta la guía completa en [DEPLOYMENT.md](DEPLOYMENT.md)
-
-**Resumen rápido:**
-
-```bash
-# En tu servidor EC2 (Ubuntu 22.04)
-
-# 1. Instalar Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# 2. Clonar repositorio
-git clone https://github.com/your-username/LLM_Social_Topicos.git
-cd LLM_Social_Topicos
-
-# 3. Configurar environment
-cp .env.example backend/.env
-nano backend/.env  # Agregar tus API keys
-
-# 4. Desplegar
-docker-compose up -d --build
-
-# 5. Verificar
-curl http://localhost/health
-```
-
-Accede a: **http://your-ec2-public-ip**
-
----
-
-## 📋 Variables de Entorno
-
-Crea `backend/.env` con:
-
-```env
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/social_topicos
-
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
-
-# JWT
-SECRET_KEY=your-secret-key-here
-
-# OpenAI
-OPENAI_API_KEY=sk-...
-
-# Facebook
-FACEBOOK_PAGE_ID=your-page-id
-FACEBOOK_ACCESS_TOKEN=your-access-token
-
-# Instagram
-INSTAGRAM_ACCOUNT_ID=your-account-id
-INSTAGRAM_ACCESS_TOKEN=your-access-token
-
-# WhatsApp (Whapi.cloud)
-WHAPI_TOKEN=your-whapi-token
-```
-
----
-
-## 🔧 Comandos Útiles
-
-### Docker
-
-```bash
-# Iniciar servicios
-docker-compose up -d
-
-# Ver logs
-docker-compose logs -f
-
-# Detener servicios
-docker-compose down
-
-# Reconstruir
-docker-compose up -d --build
-
-# Ver estado
-docker-compose ps
-```
-
-### Base de Datos
-
-```bash
-# Acceder a PostgreSQL
-docker exec -it social_topicos_db psql -U postgres -d social_topicos
-
-# Backup
-docker exec social_topicos_db pg_dump -U postgres social_topicos > backup.sql
-
-# Restore
-docker exec -i social_topicos_db psql -U postgres -d social_topicos < backup.sql
-```
-
-### Desarrollo
-
-```bash
-# Backend - Crear migración
-cd backend
-alembic revision --autogenerate -m "description"
-alembic upgrade head
-
-# Frontend - Build para producción
-cd frontend
-npm run build
-```
-
----
-
-## 📊 Endpoints API
-
-### Autenticación
-- `POST /api/auth/register` - Registrar usuario
-- `POST /api/auth/login` - Iniciar sesión
-- `GET /api/auth/me` - Obtener usuario actual
-
-### Generación de Contenido
-- `POST /api/generate` - Generar contenido con IA
-- `GET /api/chats` - Listar chats del usuario
-- `GET /api/chats/{id}` - Obtener chat específico
-
-### Publicaciones
-- `POST /api/publish` - Publicar en redes sociales
-- `GET /api/publications` - Listar publicaciones
-
-### Cola de Publicaciones
-- `GET /api/queue/status` - Estado de la cola
-- `POST /api/queue/control` - Controlar cola (start/stop)
-- `GET /api/queue/items` - Items en cola
-
-Documentación completa: **http://localhost:8080/docs**
-
----
-
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-pytest
-
-# Frontend tests
-cd frontend
-ng test
-
-# E2E tests
-ng e2e
-```
-
----
-
-## 📝 Estructura del Proyecto
->>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -649,7 +408,6 @@ docker-compose exec backend python -m pytest tests/test_content_generator.py -v
 LLM_Social_Final/
 ├── backend/
 │   ├── app/
-<<<<<<< HEAD
 │   │   ├── api/
 │   │   │   ├── endpoints/
 │   │   │   │   ├── auth.py         # Autenticación JWT
@@ -708,27 +466,6 @@ LLM_Social_Final/
 ├── COMANDOS.md                         # Comandos útiles del proyecto
 ├── DEPLOYMENT.md                       # Guía de despliegue
 └── README.md                           # Este archivo
-=======
-│   │   ├── api/          # Endpoints API
-│   │   ├── models/       # Modelos SQLAlchemy
-│   │   ├── services/     # Lógica de negocio
-│   │   └── main.py       # Aplicación FastAPI
-│   ├── static/           # Archivos estáticos (imágenes)
-│   ├── Dockerfile
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── components/  # Componentes Angular
-│   │   │   └── services/    # Servicios Angular
-│   │   └── assets/
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   └── package.json
-├── docker-compose.yml
-├── DEPLOYMENT.md
-└── README.md
->>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 ```
 
 ---
@@ -749,7 +486,6 @@ Este proyecto está bajo la Licencia MIT.
 
 ---
 
-<<<<<<< HEAD
 ## 🆘 Soporte y Documentación
 
 - **Comandos Útiles**: [COMANDOS.md](COMANDOS.md) - Guía de comandos Docker, DB y testing
@@ -757,19 +493,11 @@ Este proyecto está bajo la Licencia MIT.
 - **Dependencias**: [DEPENDENCIES.md](DEPENDENCIES.md) - Análisis de dependencias del proyecto
 - **API Docs**: http://localhost:8080/docs - Documentación interactiva Swagger
 - **Issues**: [GitHub Issues](https://github.com/jcarlosdelgado/Social-Topicos/issues)
-=======
-## 🆘 Soporte
-
-- **Documentación**: [DEPLOYMENT.md](DEPLOYMENT.md)
-- **Issues**: [GitHub Issues](https://github.com/your-username/LLM_Social_Topicos/issues)
-- **API Docs**: http://localhost:8080/docs
->>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 
 ---
 
 ## 🎓 Acerca del Proyecto
 
-<<<<<<< HEAD
 **Social Topicos** es una solución completa para la gestión automatizada de contenido en redes sociales, específicamente diseñada para instituciones educativas y universidades. 
 
 ### Objetivo
@@ -806,18 +534,3 @@ Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para más deta
 ---
 
 **Desarrollado con dedicación para instituciones educativas** 🎓
-=======
-Desarrollado para facilitar la gestión de contenido en redes sociales de instituciones educativas, utilizando inteligencia artificial para generar contenido relevante y atractivo de manera automatizada.
-
-### Características Principales:
-- 🤖 Generación automática de contenido con GPT-4
-- 🎨 Creación de imágenes con DALL-E 3
-- 📱 Publicación multi-plataforma (Facebook, Instagram, WhatsApp)
-- ⚡ Sistema de cola para publicaciones programadas
-- 📊 Dashboard de administración en tiempo real
-- 🔐 Sistema de autenticación seguro
-
----
-
-**Hecho con ❤️ para instituciones educativas**
->>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
