@@ -23,63 +23,45 @@ class WhatsAppPublisher(BasePublisher):
         url = "https://gate.whapi.cloud/stories/send/media"
         
         headers = {
-            "Authorization": f"Bearer {self.whapi_token}"
+            "Authorization": f"Bearer {self.wa_token}",
+            "Content-Type": "application/json"
         }
         
+        results = []
+        
         try:
-            # Check if URL is local (starts with http://127.0.0.1 or http://localhost)
-            # In that case, read the file directly from disk
-            if media_url.startswith(("http://127.0.0.1", "http://localhost")):
-                # Extract local file path from URL
-                # URL format: http://127.0.0.1:8080/static/media/filename.png
-                # We need: /app/static/media/filename.png
-                import re
-                match = re.search(r'/static/media/(.+)$', media_url)
-                if match:
-                    filename = match.group(1)
-                    local_path = f"/app/static/media/{filename}"
-                    print(f"📂 Reading local file: {local_path}")
-                    
-                    try:
-                        with open(local_path, 'rb') as f:
-                            image_content = f.read()
-                    except FileNotFoundError:
-                        return {"error": "FILE_NOT_FOUND", "message": f"Local file not found: {local_path}"}
-                else:
-                    return {"error": "INVALID_URL", "message": "Could not extract filename from local URL"}
-            else:
-                print(f"Descargando imagen de: {media_url}")
-                image_response = requests.get(media_url, timeout=10)
+            # 1. Send Image (if available)
+            if media_url:
+                payload_image = {
+                    "messaging_product": "whatsapp",
+                    "to": self.wa_recipient,
+                    "type": "image",
+                    "image": {
+                        "link": media_url
+                    }
+                }
+                resp_img = requests.post(url, headers=headers, json=payload_image)
+                results.append({"type": "image", "status": resp_img.status_code, "response": resp_img.json()})
                 
-                if image_response.status_code != 200:
-                    return {"error": "DOWNLOAD_ERROR", "message": f"Failed to download image: {image_response.status_code}"}
-                
-                image_content = image_response.content
-            
-            # Prepare multipart/form-data
-            files = {
-                'media': ('image.png', image_content, 'image/png')
-            }
-            
-            data = {
-                'mime_type': 'image/png',
-                'caption': text
-            }
-            
-            print(f"Subiendo a Whapi.cloud con caption: {text[:50]}...")
-            response = requests.post(url, headers=headers, files=files, data=data, timeout=30)
-            
-            if response.status_code in [200, 201]:
-                print(f"Historia de WhatsApp publicada exitosamente")
-                return {"success": True, "details": {"status": response.status_code, "response": response.json()}}
-            else:
-                error_msg = f"Error enviando media: {response.text}"
-                print(f"{error_msg}")
-                return {"error": "API_ERROR", "message": error_msg}
+                if resp_img.status_code not in [200, 201]:
+                     return {"error": "API_ERROR_IMAGE", "message": resp_img.json().get("error", {}).get("message", "Unknown error sending image")}
 
-        except requests.exceptions.Timeout:
-            return {"error": "TIMEOUT", "message": "Request timed out while uploading to Whapi.cloud"}
-        except requests.exceptions.RequestException as e:
-            return {"error": "REQUEST_ERROR", "message": f"Network error: {str(e)}"}
+            # 2. Send Text
+            payload_text = {
+                "messaging_product": "whatsapp",
+                "to": self.wa_recipient,
+                "type": "text",
+                "text": {
+                    "body": text
+                }
+            }
+            resp_text = requests.post(url, headers=headers, json=payload_text)
+            results.append({"type": "text", "status": resp_text.status_code, "response": resp_text.json()})
+
+            if resp_text.status_code not in [200, 201]:
+                 return {"error": "API_ERROR_TEXT", "message": resp_text.json().get("error", {}).get("message", "Unknown error sending text")}
+
+            return {"success": True, "details": results}
+
         except Exception as e:
             return {"error": "EXCEPTION", "message": str(e)}

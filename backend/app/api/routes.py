@@ -89,7 +89,11 @@ async def generate_content(
             )
             db.add(user_msg)
             
+<<<<<<< HEAD
             
+=======
+            # AI Message
+>>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
             ai_msg = ChatMessage(
                 session_id=chat.id, 
                 role="assistant", 
@@ -112,9 +116,12 @@ class PublishRequest(BaseModel):
     text: str
     media_url: Optional[str] = None
     video_path: Optional[str] = None  # For TikTok local video file path
+<<<<<<< HEAD
 
 from app.services.social_publisher import SocialPublisher
 social_publisher = SocialPublisher()
+=======
+>>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 
 @router.post("/publish")
 async def publish_content(
@@ -123,6 +130,7 @@ async def publish_content(
     current_user: Optional[User] = Depends(deps.get_current_user_optional)
 ):
     """
+<<<<<<< HEAD
     Publishes content directly to the specified platform.
     """
     try:
@@ -249,3 +257,26 @@ async def get_publication(
         raise HTTPException(status_code=404, detail="Publication not found")
     
     return publication
+=======
+    Saves publication to database with status 'pending'.
+    The queue processor will handle actual publishing.
+    """
+    publication = Publication(
+        user_id=current_user.id if current_user else None,
+        platform=request.platform,
+        text=request.text,
+        media_url=request.media_url,
+        video_path=request.video_path,  # Save video_path for TikTok
+        status="pending"
+    )
+    db.add(publication)
+    db.commit()
+    db.refresh(publication)
+    
+    return {
+        "success": True,
+        "message": "Publication added to queue",
+        "publication_id": publication.id,
+        "status": publication.status
+    }
+>>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a

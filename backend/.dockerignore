@@ -21,5 +21,9 @@ env
 Dockerfile
 .dockerignore
 README.md
+<<<<<<< HEAD
+=======
+tests
+>>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 .vscode
 .idea

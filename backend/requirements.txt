@@ -18,6 +18,7 @@ psycopg2-binary==2.9.10
 
 # Authentication
 bcrypt==3.2.2
+<<<<<<< HEAD
 
 # Testing
 pytest==8.3.3
@@ -25,6 +26,14 @@ pytest-mock==3.14.0
 passlib==1.7.4
 python-jose[cryptography]==3.3.0
 
+=======
+passlib==1.7.4
+python-jose[cryptography]==3.3.0
+
+# Cache
+redis==5.2.1
+
+>>>>>>> edab826f1c006fb5c88c99504b503d04cf67df9a
 # Media Processing
 moviepy==2.1.2
 imageio==2.36.1
